@@ -14,8 +14,8 @@ O treinamento utilizou o otimizador Adam, a função de perda sparse categorical
 
 - Python 3.11.15
 - TensorFlow 2.21.0
-- Keras 3.15.0
-- NumPy 2.4.6
+- Keras 3.12.0
+- NumPy 2.2.6
 
 ### 3️⃣ Técnica de Otimização do Modelo
 
@@ -25,7 +25,7 @@ Essa técnica reduz o tamanho do modelo ao otimizar principalmente os pesos inte
 
 ### 4️⃣ Resultados Obtidos
 
-A acurácia final de validação obtida foi de 70,20%. O treinamento utilizou EarlyStopping, que interrompeu o processo antes do limite máximo de épocas e restaurou os melhores pesos encontrados na validação.
+A acurácia final de validação obtida foi de 75,72%, com perda de validação de 0,7266. O treinamento utilizou EarlyStopping, que interrompeu o processo no epoch 18 de 25 e restaurou os melhores pesos encontrados na validação.
 
 O arquivo `model.h5` ficou com aproximadamente 4,2 MB. Após a conversão e otimização, o arquivo `model.tflite` ficou com aproximadamente 365 KB, uma redução de cerca de 91% no tamanho do modelo.
 
@@ -44,9 +44,9 @@ Rodando inferência em 5 amostras usando model.tflite:
 
 Amostra 1: predito=cat | real=cat
 Amostra 2: predito=ship | real=ship
-Amostra 3: predito=automobile | real=ship
+Amostra 3: predito=ship | real=ship
 Amostra 4: predito=airplane | real=airplane
 Amostra 5: predito=frog | real=frog
 ```
 
-Nas cinco amostras testadas, o modelo otimizado acertou quatro classes. Na amostra 3, classificou uma imagem de ship como automobile. Esse resultado não substitui a métrica geral de validação, mas confirma que o arquivo model.tflite foi carregado e executado corretamente em inferências individuais.
+Nas cinco amostras testadas, o modelo otimizado acertou todas as classes. Esse resultado não substitui a métrica geral de validação, mas confirma que o arquivo `model.tflite` foi carregado e executado corretamente em inferências individuais.
