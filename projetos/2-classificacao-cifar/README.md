@@ -14,7 +14,7 @@ O treinamento utilizou o otimizador Adam, a função de perda sparse categorical
 
 - Python 3.11.15
 - TensorFlow 2.21.0
-- Keras 3.15.0
+- Keras 3.12.0
 - NumPy 2.4.6
 
 ### 3️⃣ Técnica de Otimização do Modelo
