@@ -1,123 +1,52 @@
-# Projeto 2 — Classificação CIFAR-10
-
-## 💻 O Desafio Técnico
-
-Desenvolva um **modelo de Visão Computacional** capaz de **classificar imagens coloridas** em 10 categorias de objetos e animais (avião, automóvel, pássaro, gato, cervo, cachorro, sapo, cavalo, navio, caminhão), e posteriormente **otimize-o para execução em dispositivos Edge**.
-
-O foco não é apenas obter alta acurácia, mas **compreender o fluxo completo**:
-
-**treinamento → validação → salvamento → conversão → otimização**
-
-Este projeto tem uma diferença importante em relação a uma classificação de dígitos: as imagens são **coloridas (RGB)** e visualmente mais complexas, o que torna a tarefa de classificação genuinamente mais difícil — por isso **data augmentation** é um requisito obrigatório aqui, não opcional.
-
-## 🎯 Conjunto de Dados
-
-Dataset **CIFAR-10**, disponível diretamente via `tf.keras.datasets.cifar10` (não é necessário download manual). 60.000 imagens 32x32 coloridas, 10 classes.
-
-## ✅ Requisitos Obrigatórios
-
-### Etapa 1 — Treinamento do Modelo (`train_model.py`)
-
-Implemente:
-
-- Carregamento do dataset CIFAR-10 via TensorFlow
-- Split explícito treino/validação
-- **Data augmentation** aplicada ao conjunto de treino, usando camadas do Keras
-  (ex: `RandomFlip("horizontal")`, `RandomRotation`, `RandomZoom`) incorporadas ao
-  modelo ou ao pipeline de treino
-- Construção de uma CNN com 3-4 blocos convolucionais (`Conv2D` + `BatchNormalization`
-  + `MaxPooling2D`) seguida de `Dropout`
-- Treinamento com **early stopping** baseado na perda de validação
-- Exibição da **acurácia de validação final** no terminal
-- Salvamento do modelo treinado em formato Keras (`model.h5`)
-
-> 💡 Se você aplicar a augmentation de outra forma (ex: pré-processamento manual em
-> `tf.data`), tudo bem — apenas descreva isso claramente no relatório, já que a
-> correção automática busca primeiro por camadas de augmentation no próprio modelo.
-
-> 💡 CIFAR-10 é mais difícil que MNIST/Fashion-MNIST para uma CNN simples treinada
-> rapidamente em CPU — não se preocupe se a acurácia ficar bem abaixo de 90%. O
-> importante é o pipeline completo funcionar corretamente.
-
-### Etapa 2 — Otimização do Modelo (`optimize_model.py`)
-
-Implemente:
-
-- Carregamento do `model.h5` treinado
-- Conversão para **TensorFlow Lite** (`model.tflite`)
-- Aplicação de uma técnica de otimização (ex: **Dynamic Range Quantization**)
-
-### Etapa 3 — Inferência com o Modelo Otimizado (`run_inference.py`)
-
-Implemente:
-
-- Carregamento especificamente do **`model.tflite`** (o artefato de edge — não
-  o `model.h5`) usando `tf.lite.Interpreter`
-- Execução de inferência em pelo menos **5 amostras** do conjunto de teste
-- Exibição no terminal, para cada amostra, da classe **predita** vs. a classe **real**
-
-> 💡 Essa etapa existe porque uma métrica agregada (accuracy) pode esconder
-> problemas que só aparecem olhando exemplos individuais. Também é o teste mais
-> próximo do uso real em produção: carregar o artefato de edge e classificar
-> uma entrada por vez.
-
-## 📂 Estrutura da Pasta
-
-⚠️ Não altere os nomes dos arquivos.
-
-```
-projetos/2-classificacao-cifar/
-├── train_model.py         # ✏️ Treinamento do modelo
-├── optimize_model.py      # ✏️ Conversão e otimização
-├── run_inference.py       # ✏️ Inferência de exemplo com o modelo otimizado
-├── requirements.txt       # 📄 Dependências do projeto
-├── model.h5               # 🤖 Gerado por você — deve ser commitado
-├── model.tflite           # ⚡ Gerado por você — deve ser commitado
-└── README.md               # 📝 Este arquivo (também usado como relatório)
-```
-
-## ⚠️ Restrições e Considerações de Engenharia
-
-- Entrada do modelo: imagens 32x32, 3 canais (RGB), normalizadas em [0, 1]
-- CNN simples — evite arquiteturas muito profundas
-- Não utilize modelos pré-treinados
-- Número de épocas limitado (ex: até 25-30, com early stopping)
-- Treinamento apenas em CPU
-
-## ⚖️ Critérios de Avaliação
-
-- **Funcionalidade** — execução correta dos scripts e geração dos arquivos `.h5` e `.tflite`
-- **Qualidade do modelo** — acurácia de validação consistente com o esperado para o dataset
-- **Generalização** — uso adequado de data augmentation
-- **Edge AI** — conversão correta para `.tflite` com técnica de otimização aplicada
-- **Documentação** — preenchimento adequado do relatório abaixo
-
----
-
 ## 📝 Relatório do Candidato
 
-👤 **Nome Completo:**
+👤 **Nome Completo:** João Victor da Silva Costa Vasconcelos
 
 ### 1️⃣ Resumo da Arquitetura do Modelo
 
-Descreva a arquitetura da CNN implementada em `train_model.py` e a estratégia de data augmentation utilizada.
+Implementei uma CNN para classificar imagens RGB de 32×32 pixels do dataset CIFAR-10. A entrada utiliza data augmentation com espelhamento horizontal, pequenas rotações e zoom aleatório durante o treinamento.
+
+A rede possui três blocos convolucionais com 32, 64 e 128 filtros, respectivamente. Cada bloco é composto por Conv2D com ativação ReLU, BatchNormalization e MaxPooling2D. Após os blocos convolucionais, foram utilizadas as camadas Flatten, Dense com 128 neurônios e ReLU, Dropout de 0,4 e uma camada final Dense com 10 saídas e ativação softmax.
+
+O treinamento utilizou o otimizador Adam, a função de perda sparse categorical crossentropy e EarlyStopping monitorando a perda de validação.
 
 ### 2️⃣ Bibliotecas Utilizadas
 
-Liste as principais bibliotecas utilizadas, preferencialmente com suas versões.
+- Python 3.11.15
+- TensorFlow 2.21.0
+- Keras 3.15.0
+- NumPy 2.4.6
 
 ### 3️⃣ Técnica de Otimização do Modelo
 
-Explique qual técnica foi utilizada para otimizar o modelo em `optimize_model.py`.
+Foi utilizada Dynamic Range Quantization durante a conversão do modelo Keras (`model.h5`) para TensorFlow Lite (`model.tflite`), por meio de `tf.lite.Optimize.DEFAULT`.
+
+Essa técnica reduz o tamanho do modelo ao otimizar principalmente os pesos internos, tornando o modelo mais apropriado para dispositivos Edge com limitações de memória e armazenamento. Ela não exigiu um conjunto adicional de imagens para calibração e manteve a interface de entrada e saída em float32.
 
 ### 4️⃣ Resultados Obtidos
 
-Informe a acurácia de validação obtida e o tamanho dos arquivos `model.h5` e `model.tflite`.
+A acurácia final de validação obtida foi de 70,20%. O treinamento utilizou EarlyStopping, que interrompeu o processo antes do limite máximo de épocas e restaurou os melhores pesos encontrados na validação.
+
+O arquivo `model.h5` ficou com aproximadamente 4,2 MB. Após a conversão e otimização, o arquivo `model.tflite` ficou com aproximadamente 365 KB, uma redução de cerca de 91% no tamanho do modelo.
 
 ### 5️⃣ Comentários Adicionais (Opcional)
 
-Dificuldades encontradas, decisões técnicas importantes, limitações do modelo, aprendizados durante o desafio.
+O modelo foi treinado apenas em CPU e sem o uso de modelos pré-treinados. Este projeto marcou meu primeiro contato prático com Machine Learning, e o principal aprendizado foi compreender o pipeline completo para Edge AI: preparação dos dados, treinamento, validação, salvamento, conversão para TensorFlow Lite e inferência com o modelo otimizado.
+
+O projeto também mostrou que a entrega não termina ao treinar uma CNN: foi necessário converter o modelo e verificar que o artefato `model.tflite` realmente executava inferências. Como limitação, o CIFAR-10 possui imagens pequenas e classes visualmente parecidas, o que torna a classificação mais desafiadora.
 
 ### 6️⃣ Exemplo de Inferência
 
-Cole a saída do terminal ao rodar `run_inference.py` (predito vs. real para as 5+ amostras), e comente brevemente se houve algum caso interessante (acerto ou erro) entre as amostras testadas.
+A execução foi realizada com `tf.lite.Interpreter`, carregando especificamente o arquivo `model.tflite`.
+
+```text
+Rodando inferência em 5 amostras usando model.tflite:
+
+Amostra 1: predito=cat | real=cat
+Amostra 2: predito=ship | real=ship
+Amostra 3: predito=automobile | real=ship
+Amostra 4: predito=airplane | real=airplane
+Amostra 5: predito=frog | real=frog
+```
+
+Nas cinco amostras testadas, o modelo otimizado acertou quatro classes. Na amostra 3, classificou uma imagem de ship como automobile. Esse resultado não substitui a métrica geral de validação, mas confirma que o arquivo model.tflite foi carregado e executado corretamente em inferências individuais.
