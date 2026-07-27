@@ -10,6 +10,12 @@ A rede possui três blocos convolucionais com 32, 64 e 128 filtros, respectivame
 
 O treinamento utilizou o otimizador Adam, a função de perda sparse categorical crossentropy e EarlyStopping monitorando a perda de validação.
 
+#### Justificativa dos Hiperparâmetros
+
+Foi utilizado `Dropout(0.4)` logo após a camada densa, região que concentra a maior parte dos parâmetros da rede. Durante o treinamento, essa taxa desativa aleatoriamente 40% das ativações, reduzindo a coadaptação entre neurônios e o risco de overfitting. O valor de 0.4 oferece uma regularização relevante, mas ainda mantém 60% das ativações disponíveis em cada atualização, evitando uma perda excessiva de capacidade de aprendizado.
+
+O `batch_size=64` foi escolhido como um equilíbrio entre estabilidade das atualizações, consumo de memória e tempo de treinamento em CPU. Já o `EarlyStopping` com `patience=4` permite tolerar pequenas oscilações na perda de validação, mas interrompe o treinamento quando a melhora deixa de ocorrer, reduzindo treinamento desnecessário e overfitting.
+
 ### 2️⃣ Bibliotecas Utilizadas
 
 - Python 3.11.15
